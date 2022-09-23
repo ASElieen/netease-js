@@ -23,6 +23,7 @@ export const ListItem = styled.div`
   position: relative;
   width: 32%;
   .img_wrapper {
+    //遮罩 强调颜色
     .decorate {
       position: absolute;
       top: 0;
@@ -53,6 +54,8 @@ export const ListItem = styled.div`
       border-radius: 3px;
     }
   }
+
+  //底部信息
   .desc {
     overflow: hidden;
     margin-top: 2px;

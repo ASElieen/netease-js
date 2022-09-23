@@ -6,6 +6,7 @@ export const Top = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  padding: 5px 10px;
   background: ${commonStyle["theme-color"]};
   & > span {
     line-height: 40px;
