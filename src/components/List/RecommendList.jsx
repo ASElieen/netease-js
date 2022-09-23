@@ -4,13 +4,13 @@ import { List,ListWrapper,ListItem } from './RecommendListStyle'
 import { BsFillPlayFill } from "react-icons/bs";
 
 const RecommendList = (props) => {
-    const {recommendList} = props
+    const {lists} = props
   return (
     <>
       <ListWrapper>
         <h1 className="title">推荐歌单</h1>
         <List>
-          {recommendList.map((item, index) => (
+          {lists.map((item, index) => (
             <ListItem key={item.id + index}>
               <div className="img_wrapper">
                 <div className="decorate"></div>

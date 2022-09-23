@@ -1,19 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { SliderContainer } from "./SliderStyle";
 import { Swiper } from "antd-mobile";
+import { getBannerImgs } from "../../store/Slices/bannerSlice";
+import { useDispatch, useSelector } from "react-redux";
 
-const Slider = (props) => {
-  const { bannerList } = props;
+const Slider = () => {
+  const dispatch = useDispatch();
+  const { bannerImg, isLoading } = useSelector((store) => store.banner);
 
-  const items = bannerList.map((item, index) => (
-    <Swiper.Item key={index}>
-      <img
-        src={item.imageUrl}
-        alt=""
-        style={{ width: "100%", height: "100%" }}
-      />
-    </Swiper.Item>
-  ));
+  useEffect(() => {
+    if (!bannerImg.length) {
+      dispatch(getBannerImgs());
+    }
+  });
+
+  const items =
+    !isLoading &&
+    bannerImg.map((item, index) => (
+      <Swiper.Item key={index}>
+        <img
+          src={item.imageUrl}
+          alt=""
+          style={{ width: "100%", height: "100%" }}
+        />
+      </Swiper.Item>
+    ));
 
   return (
     <SliderContainer>
