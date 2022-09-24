@@ -12,8 +12,9 @@ export const getHotSingerListRequest = (count)=>{
     return axiosInstance.get(`/top/artists?offset=${count}`);
 }
 
-export const getSingerListRequest = (categoryName, alpha, count=30,area=-1) => {
+//count为几在底部添加几个
+export const getSingerListRequest = (categoryName, alpha, count,area=-1) => {
   return axiosInstance.get(
-    `/artist/list?cat=${categoryName}&initial=${alpha.toLowerCase()}&offset=${count}&area=${area}`
+    `/artist/list?type=${categoryName}&initial=${alpha.toLowerCase()}&offset=${count}&area=${area}`
   );
 };

@@ -52,3 +52,11 @@ border-bottom: 1px solid ${commonStyle['border-color']};
     font-weight: 500;
 }
 `
+
+export const LoadingContainer = styled.div`
+display: flex;
+width: 100%;
+height: 100%;
+justify-content: center;
+align-items: center;
+`
