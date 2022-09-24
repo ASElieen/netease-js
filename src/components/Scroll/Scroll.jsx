@@ -1,11 +1,13 @@
-import React,{useState,useRef,useEffect,useImperativeHandle} from 'react'
-import PropTypes from 'prop-types'
-import BScroll from 'better-scroll'
-import { forwardRef } from 'react'
-import { ScrollContainer } from './ScrollStyle'
+import React, { useState, useRef, useEffect, useImperativeHandle } from "react";
+import PropTypes from "prop-types";
+import BScroll from "better-scroll";
+import { forwardRef } from "react";
+import { ScrollContainer, PullDownLoading, PullUpLoading } from "./ScrollStyle";
+import CircleLoading from "../Loading/CircleLoading";
+import UserLoading from "../Loading/UserLoading";
 
 //forwardRef使得函数组件可以被上层组件调用ref
-const Scroll = forwardRef((props,ref) => {
+const Scroll = forwardRef((props, ref) => {
   const {
     direction,
     click,
@@ -16,6 +18,13 @@ const Scroll = forwardRef((props,ref) => {
     bounceBottom,
   } = props;
   const { pullUp, pullDown, onScroll } = props;
+
+  const PullUpdisplayStyle = pullUpLoading
+    ? { display: "" }
+    : { display: "none" };
+  const PullDowndisplayStyle = pullDownLoading
+    ? { display: "" }
+    : { display: "none" };
 
   //better-scroll实例
   const [bScroll, setBScroll] = useState();
@@ -111,7 +120,15 @@ const Scroll = forwardRef((props,ref) => {
   }));
 
   return (
-    <ScrollContainer ref={scrollContainerRef}>{props.children}</ScrollContainer>
+    <ScrollContainer ref={scrollContainerRef}>
+      {props.children}
+      <PullUpLoading style={PullUpdisplayStyle}>
+        <CircleLoading />
+      </PullUpLoading>
+      <PullDownLoading style={PullDowndisplayStyle}>
+        <UserLoading />
+      </PullDownLoading>
+    </ScrollContainer>
   );
 });
 
@@ -141,4 +158,4 @@ Scroll.propTypes = {
   bounceBottom: PropTypes.bool, // 是否支持向下吸底
 };
 
-export default Scroll
+export default Scroll;

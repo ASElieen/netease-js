@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getHotSingerList,
   getSingerListWithCategory,
+  requestMoreHotSingers,
+  requestMoreSingersWithCategory,
+  clearPageCount,
 } from "../../store/Slices/singerListSlice";
 import { handleCategory } from "../../api/utils";
 import LazyLoad, { forceCheck } from "react-lazyload";
@@ -22,7 +25,9 @@ const Singer = () => {
   const [categoryName, setCategoryName] = useState("");
   const [alpha, setAlpha] = useState("");
   const dispatch = useDispatch();
-  const { singerList, isLoading } = useSelector((store) => store.hotSinger);
+  const { singerList, isLoading, pullDownLoading } = useSelector(
+    (store) => store.hotSinger
+  );
 
   useEffect(() => {
     if (!singerList.length) {
@@ -30,6 +35,7 @@ const Singer = () => {
     }
   }, []);
 
+  //处理字母分类
   let handleAlpha = (val) => {
     setAlpha(val);
     sessionStorage.setItem("alpha", val);
@@ -46,6 +52,7 @@ const Singer = () => {
     );
   };
 
+  //处理歌手分类
   let handleCategoryName = (val) => {
     setCategoryName(val);
     sessionStorage.setItem("category", val);
@@ -59,11 +66,46 @@ const Singer = () => {
     );
   };
 
-  //Scroll组件的上拉刷新(相当于重新加载)
- 
+  //Scroll组件的手势下拉刷新(顶部 相当于重新加载)
+  const handlePullDown = () => {
+    dispatch(clearPageCount());
 
-  //Scroll组件的下拉刷新(添加分页获取更多数据)
- 
+    if (sessionStorage.getItem("alpha") || sessionStorage.getItem("category")) {
+      console.log("data");
+      const category = handleCategory(
+        sessionStorage.getItem("category"),
+        mapCategory
+      );
+      dispatch(
+        getSingerListWithCategory({
+          categoryName: category.type,
+          alpha: sessionStorage.getItem("alpha"),
+          area: category.area,
+        })
+      );
+    } else {
+      dispatch(getHotSingerList());
+    }
+  };
+
+  //Scroll组件的手势上滑刷新(底部 添加分页获取更多数据)
+  const handlePullUp = () => {
+    if (sessionStorage.getItem("alpha") || sessionStorage.getItem("category")) {
+      const category = handleCategory(
+        sessionStorage.getItem("category"),
+        mapCategory
+      );
+      dispatch(
+        requestMoreSingersWithCategory({
+          categoryName: category.type,
+          alpha: sessionStorage.getItem("alpha"),
+          area: category.area,
+        })
+      );
+    } else {
+      dispatch(requestMoreHotSingers());
+    }
+  };
 
   const renderList = () => {
     return (
@@ -113,7 +155,12 @@ const Singer = () => {
       </NavContainer>
       {!isLoading ? (
         <ListContainer>
-          <Scroll onScroll={forceCheck}>
+          <Scroll
+            onScroll={forceCheck}
+            pullDown={handlePullDown}
+            pullUp={handlePullUp}
+            pullDownLoading={pullDownLoading}
+          >
             {renderList()}
           </Scroll>
         </ListContainer>

@@ -12,24 +12,54 @@ const initialState = {
 
 //初次加载热门歌手列表
 export const getHotSingerList = createAsyncThunk('list/getHotSingerList',async ()=>{
-    try {
-        const resp = await getHotSingerListRequest(initialState.pageCount)
-        return resp.artists;
-    } catch (error) {
-        console.log('获取热门歌手失败'+error)
-    }
+  try {
+    const resp = await getHotSingerListRequest();
+    return resp.artists;
+  } catch (error) {
+    console.log("获取热门歌手失败" + error);
+  }
+})
+
+//下拉加载热门歌手列表
+export const requestMoreHotSingers = createAsyncThunk('list/requestMoreSingers',async (_,thunkAPI)=>{
+  thunkAPI.dispatch(addPageCount(20))
+  const state = thunkAPI.getState()
+  try {
+    const resp = await getHotSingerListRequest(state.hotSinger.pageCount)
+    return resp.artists
+  } catch (error) {
+    console.log('获取更多热门歌手失败'+error)
+  }
 })
 
 
-
+//分类歌手列表
 export const getSingerListWithCategory = createAsyncThunk('list/getSingerListWithCategory',async (data)=>{
     const {categoryName,alpha,area} = data
     try {
-        const resp = await getSingerListRequest(categoryName,alpha,initialState.pageCount,area)
+        const resp = await getSingerListRequest(categoryName,alpha,area)
         return resp.artists
     } catch (error) {
         console.log('获取歌手列表(分类)失败'+error)
     }
+})
+
+//下拉加载分类歌手列表
+export const requestMoreSingersWithCategory = createAsyncThunk('list/requestMoreSingerListWithCategory',async (data,thunkAPI)=>{
+  const { categoryName, alpha, area } = data;
+  thunkAPI.dispatch(addPageCount(20))
+  const state = thunkAPI.getState()
+  try {
+    const resp = await getSingerListRequest(
+      categoryName,
+      alpha,
+      state.hotSinger.pageCount,
+      area
+    );
+    return resp.artists;
+  } catch (error) {
+    console.log("获取更多歌手列表(分类)失败" + error);
+  }
 })
 
 
@@ -38,18 +68,15 @@ const hotSingerSlice = createSlice({
   name: "hotSinger",
   initialState,
   reducers: {
-    addPageCount: (state) => {
-      state.pageCount += 20;
+    addPageCount: (state, action) => {
+      state.pageCount = action.payload;
     },
     clearPageCount: (state) => {
       state.pageCount = 0;
     },
-    changePullUpLoading: (state) => {
-      state.pullUpLoading = !state.pullUpLoading;
-    },
-    changePullDownLoading: (state) => {
-      state.pullDownLoading = !state.pullDownLoading;
-    },
+    changePullUpLoading: (state, action) => {
+      state.pullUpLoading = action.payload;
+    }
   },
   extraReducers: {
     [getHotSingerList.pending]: (state) => {
@@ -75,12 +102,33 @@ const hotSingerSlice = createSlice({
       state.isLoading = true;
     },
 
+    //下拉刷新部分
+    [requestMoreHotSingers.pending]: (state) => {
+      state.pullDownLoading = true;
+    },
+    [requestMoreHotSingers.fulfilled]: (state, action) => {
+      state.pullDownLoading = false;
+      state.singerList = action.payload;
+    },
+    [requestMoreHotSingers.rejected]: (state) => {
+      state.pullDownLoading = true;
+    },
+
+    [requestMoreSingersWithCategory.pending]: (state) => {
+      state.pullDownLoading = true;
+    },
+    [requestMoreSingersWithCategory.fulfilled]: (state, action) => {
+      state.pullDownLoading = false;
+      state.singerList = action.payload;
+    },
+    [requestMoreSingersWithCategory.rejected]: (state) => {
+      state.pullDownLoading = true;
+    },
   },
 });
 export const {
   addPageCount,
   clearPageCount,
   changePullUpLoading,
-  changePullDownLoading,
 } = hotSingerSlice.actions;
 export default hotSingerSlice.reducer
