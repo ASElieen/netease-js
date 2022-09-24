@@ -6,6 +6,7 @@ import Scroll from "../../components/Scroll/Scroll";
 import CircleLoading from "../../components/Loading/CircleLoading";
 import { useDispatch, useSelector } from "react-redux";
 import { getLists } from "../../store/Slices/listSlice";
+//滚动的时候显示对应视口图片
 import { forceCheck } from "react-lazyload";
 
 const Recommend = () => {
