@@ -1,35 +1,51 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
+import {useDispatch,useSelector} from 'react-redux'
+import {
+  getHotSingerList,
+  getSingerListWithCategory,
+} from "../../store/Slices/singerListSlice";
 import { NavContainer,ListContainer,List,ListItem } from "./SingerStyle";
 import HorizenItem from "../../baseUI/Horizen-item/HorizenItem";
 import { categoryTypes, alphaTypes } from "../../api/mock";
 import Scroll from "../../components/Scroll/Scroll";
+import CircleLoading from "../../components/Loading/CircleLoading";
 
-//mock
-const singerList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((item) => {
-  return {
-    picUrl:
-      "https://p2.music.126.net/uTwOm8AEFFX_BYHvfvFcmQ==/109951164232057952.jpg",
-    name: "隔壁老樊",
-    accountId: 277313426,
-  };
-}); 
+
 
 const Singer = () => {
   const [categoryName, setCategoryName] = useState("");
   const [alpha, setAlpha] = useState("");
+  const dispatch = useDispatch()
+  const { singerList, isLoading } = useSelector((store) => store.hotSinger);
+
+  useEffect(()=>{
+    if(!singerList.length){
+      dispatch(getHotSingerList())
+    }
+  },[])
 
   let handleAlpha = (val) => {
     setAlpha(val);
     sessionStorage.setItem("alpha", val);
+    dispatch(getSingerListWithCategory({
+      categoryName:categoryName,
+      alpha:val
+    }))
   };
 
   let handleCategoryName = (val) => {
     setCategoryName(val);
     sessionStorage.setItem("category", val);
+    dispatch(
+      getSingerListWithCategory({
+        categoryName: val,
+        alpha: alpha,
+      })
+    );
   };
 
   const renderList = ()=>{
-    return (
+    return (!isLoading && 
       <List>
         {
           singerList.map((item,index)=>(
@@ -45,7 +61,7 @@ const Singer = () => {
     )
   }
 
-  return (
+  return (!isLoading && 
     <>
       <NavContainer>
         <HorizenItem
@@ -61,6 +77,7 @@ const Singer = () => {
         />
       </NavContainer>
       <ListContainer>
+        {}
         <Scroll>{renderList()}</Scroll>
       </ListContainer>
     </>
