@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getLists } from "../../store/Slices/listSlice";
 //滚动的时候显示对应视口图片
 import { forceCheck } from "react-lazyload";
+import { Outlet } from "react-router-dom";
 
 const Recommend = () => {
   const dispatch = useDispatch();
@@ -36,6 +37,7 @@ const Recommend = () => {
             <RecommendList lists={lists} />
           </div>
         </Scroll>
+        <Outlet/>
       </Content>
     )
   );
