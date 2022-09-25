@@ -32,14 +32,15 @@ const Album = (props) => {
     dispatch(getAlbumDetail(urlId))
   },[])
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     setShowStatus(false);
-  };
+  }, []);
 
   //滑动处理
   const HEADER_HEIGHT = 45;
 
-  const handleScroll = (pos) => {
+  
+  const handleScroll = useCallback((pos) => {
     let minScrollY = -HEADER_HEIGHT;
     let percent = Math.abs(pos.y / minScrollY);
     let headerDOM = headerEl.current;
@@ -56,7 +57,7 @@ const Album = (props) => {
       setTitle("歌单");
       setIsMarquee(false);
     }
-  };
+  },[currentAlbum]);
 
   //-------------提取JSX部分------------------
   const renderTopDesc = ()=>{
