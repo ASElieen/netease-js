@@ -22,3 +22,7 @@ export const getSingerListRequest = (categoryName, alpha, count=0,area=-1) => {
 export const getRankListRequest = ()=>{
   return axiosInstance.get(`/toplist/detail`);
 }
+
+export const getAlbumDetailRequest = (id) => {
+  return axiosInstance.get(`/playlist/detail?id=${id}`);
+};

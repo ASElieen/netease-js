@@ -33,3 +33,9 @@ export const getName = list => {
   });
   return str;
 };
+
+//处理useLocation获取到的当前路由地址
+export const getUrlId = (url) => {
+  const positionArr = url.split("/");
+  return positionArr[2];
+};

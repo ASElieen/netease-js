@@ -1,25 +1,35 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback,useEffect } from "react";
 import { Container, TopDesc, Menu, SongList, SongItem } from "./AlbumStyle";
 import Scroll from "../../components/Scroll/Scroll";
 import Header from "../../components/Header/Header";
 import { CSSTransition } from "react-transition-group";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import { BsFillPlayFill } from "react-icons/bs";
 import { BiComment, BiLike } from "react-icons/bi";
 import { MdCollections } from "react-icons/md";
 import { IoIosMore } from "react-icons/io";
-import { getCount, getName } from "../../api/utils";
+import { getCount, getName,getUrlId } from "../../api/utils";
 import commonStyle from "../../assets/commonStyle";
-//mock
-import { currentAlbum } from "../../api/mock";
+//数据层
+import {useDispatch,useSelector} from 'react-redux'
+import { getAlbumDetail } from "../../store/Slices/albumSlice";
 
 const Album = (props) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const location = useLocation()
+  const { currentAlbum, isLoading } = useSelector((store) => store.albumList);
   const [showStatus, setShowStatus] = useState(true);
   const [title, setTitle] = useState("歌单");
   const [isMarquee, setIsMarquee] = useState(false);
 
   const headerEl = useRef();
+
+  //数据层
+  const urlId = getUrlId(location.pathname)
+  useEffect(()=>{
+    dispatch(getAlbumDetail(urlId))
+  },[])
 
   const handleBack = () => {
     setShowStatus(false);
@@ -47,7 +57,7 @@ const Album = (props) => {
     }
   };
 
-  return (
+  return (!isLoading && 
     <CSSTransition
       in={showStatus}
       timeout={300}
