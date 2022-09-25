@@ -9,7 +9,17 @@ export const getCount = (count) =>{
     }
 }
 
+//Singer组件处理map数据
 export const handleCategory = (categoryName,category)=>{
   const {type,area} = category.get(categoryName)
   return {type,area}
+}
+
+//rank组件处理接口数据
+export const filterIndex = (rankList)=>{
+  for (let i = 0; i < rankList.length - 1; i++) {
+    if (rankList[i].tracks.length && !rankList[i + 1].tracks.length) {
+      return i + 1;
+    }
+  }
 }
