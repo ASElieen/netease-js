@@ -1,24 +1,51 @@
-import React, { useState } from "react";
-import { Container,TopDesc,Menu,SongList,SongItem } from "./AlbumStyle";
+import React, { useState, useRef, useCallback } from "react";
+import { Container, TopDesc, Menu, SongList, SongItem } from "./AlbumStyle";
 import Scroll from "../../components/Scroll/Scroll";
 import Header from "../../components/Header/Header";
 import { CSSTransition } from "react-transition-group";
 import { useNavigate } from "react-router-dom";
-import {BsFillPlayFill} from 'react-icons/bs'
-import {BiComment,BiLike} from 'react-icons/bi'
+import { BsFillPlayFill } from "react-icons/bs";
+import { BiComment, BiLike } from "react-icons/bi";
 import { MdCollections } from "react-icons/md";
 import { IoIosMore } from "react-icons/io";
-import { getCount,getName } from "../../api/utils";
+import { getCount, getName } from "../../api/utils";
+import commonStyle from "../../assets/commonStyle";
 //mock
 import { currentAlbum } from "../../api/mock";
 
 const Album = (props) => {
   const navigate = useNavigate();
   const [showStatus, setShowStatus] = useState(true);
+  const [title, setTitle] = useState("歌单");
+  const [isMarquee, setIsMarquee] = useState(false);
 
-  const handleBack = ()=>{
-    setShowStatus(false)
-  }
+  const headerEl = useRef();
+
+  const handleBack = () => {
+    setShowStatus(false);
+  };
+
+  //滑动处理
+  const HEADER_HEIGHT = 45;
+
+  const handleScroll = (pos) => {
+    let minScrollY = -HEADER_HEIGHT;
+    let percent = Math.abs(pos.y / minScrollY);
+    let headerDOM = headerEl.current;
+
+    //顶部高度开始变化
+    if (pos.y < minScrollY) {
+      headerDOM.style.backgroundColor = commonStyle["theme-color"];
+      headerDOM.style.opacity = Math.min(1, (percent - 1) / 2);
+      setTitle(currentAlbum.name);
+      setIsMarquee(true);
+    } else {
+      headerDOM.style.backgroundColor = "";
+      headerDOM.style.opacity = 1;
+      setTitle("歌单");
+      setIsMarquee(false);
+    }
+  };
 
   return (
     <CSSTransition
@@ -30,8 +57,13 @@ const Album = (props) => {
       onExited={() => navigate(-1)}
     >
       <Container>
-        <Header title="返回" handleClick={handleBack} />
-        <Scroll bounceTop={false}>
+        <Header
+          title={title}
+          handleClick={handleBack}
+          ref={headerEl}
+          isMarquee={isMarquee}
+        />
+        <Scroll bounceTop={false} onScroll={handleScroll}>
           <div>
             <TopDesc background={currentAlbum.coverImgUrl}>
               <div className="background">

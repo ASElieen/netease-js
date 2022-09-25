@@ -4,23 +4,33 @@ import {MdArrowBackIosNew} from 'react-icons/md'
 import PropTypes from "prop-types";
 
 const Header = forwardRef((props,ref) => {
-    const {handleClick,title} = props
+    const {handleClick,title,isMarquee} = props
   return (
     <HeaderContainer ref={ref}>
-        <MdArrowBackIosNew className='iconfont back' onClick={handleClick}/>
+      <div className="svg_container">
+        <MdArrowBackIosNew className="iconfont back" onClick={handleClick} />
+      </div>
+      {isMarquee ? (
+        <div className="marquee">
+          <h1>{title}</h1>
+        </div>
+      ) : (
         <h1>{title}</h1>
+      )}
     </HeaderContainer>
-  )
+  );
 });
 
 Header.defaultProps={
     handleClick:()=>{},
-    title:'标题'
+    title:'标题',
+    isMarquee:false
 }
 
 Header.propTypes = {
     handleClick:PropTypes.func,
-    title:PropTypes.string
+    title:PropTypes.string,
+    isMarquee:PropTypes.bool
 }
 
 export default React.memo(Header);
