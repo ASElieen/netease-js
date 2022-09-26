@@ -2,26 +2,26 @@ import React,{useEffect} from 'react'
 import Scroll from '../../components/Scroll/Scroll'
 import { getRankList } from '../../store/Slices/rankSlice'
 import {useDispatch,useSelector} from 'react-redux'
-import { filterIndex } from '../../api/utils'
+import {Outlet, useNavigate} from 'react-router-dom'
+import { filterIndex } from "../../api/utils";
 import { Container,List,ListItem,SongList } from './RankStyle'
 import { LoadingContainer } from '../Singer/SingerStyle'
 import UserLoading from '../../components/Loading/UserLoading'
 
+
 const Rank = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const { rankList, isLoading } = useSelector((store) => store.rankList);
 
   let globalStartIndex = filterIndex(rankList);
   let officialList = rankList.slice(0, globalStartIndex);
   let globalList = rankList.slice(globalStartIndex);
 
-  const enterDetail = (name) => {
-    const idx = filterIndex(name);
-    if (idx === null) {
-      alert("暂无相关数据");
-      return;
-    }
+  const enterDetail = (detail) => {
+    navigate(`/rank/${detail.id}`)
   };
+
 
   useEffect(() => {
     dispatch(getRankList());
@@ -34,7 +34,7 @@ const Rank = () => {
           <ListItem
             key={item.coverImgId+''+index}
             tracks={item.tracks}
-            onClick={() => enterDetail(item.name)}
+            onClick={() => enterDetail(item)}
           >
             <div className="img_wrapper">
               <img src={item.coverImgUrl} alt="" />
@@ -86,6 +86,7 @@ const Rank = () => {
           ) : null}
         </div>
       </Scroll>
+      <Outlet/>
     </Container>
   );
 }

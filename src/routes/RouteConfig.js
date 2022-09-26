@@ -13,7 +13,9 @@ export const RouteConfig = ()=>{
         <Routes>
             <Route path='/' element={<Home/>}>
                 <Route path='/' element={<Navigate to='/recommend'/>}/>
-                <Route path='/rank' element={<Rank/>}/>
+                <Route path='/rank' element={<Rank/>}>
+                    <Route path='/rank/:id' element={<Album/>}/>
+                </Route>
                 <Route path='/recommend' element={<Recommend/>}>
                     <Route path='/recommend/:id' element={<Album/>}/>
                 </Route>
