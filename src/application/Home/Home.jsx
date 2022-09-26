@@ -3,6 +3,8 @@ import React from 'react'
 import { AiOutlineMenu, AiOutlineSearch } from "react-icons/ai";
 import { Outlet,NavLink } from 'react-router-dom';
 
+import Player from '../Player/Player';
+
 import { Top,Tab,TabItem } from './HomeStyle'
 
 const Home = () => {
@@ -46,6 +48,7 @@ const Home = () => {
         </NavLink>
       </Tab>
       <Outlet />
+      <Player/>
     </>
   );
 }
