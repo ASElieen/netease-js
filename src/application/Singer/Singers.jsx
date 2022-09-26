@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import {useNavigate,Outlet} from 'react-router-dom'
 import {
   getHotSingerList,
   getSingerListWithCategory,
@@ -25,9 +26,15 @@ const Singer = () => {
   const [categoryName, setCategoryName] = useState("");
   const [alpha, setAlpha] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const { singerList, isLoading, pullDownLoading } = useSelector(
     (store) => store.hotSinger
   );
+
+  //页面跳转 =>listItem onClick
+  const enterDetail = (detail)=>{
+    navigate(`/singers/${detail.id}`)
+  }
 
   useEffect(() => {
     if (!singerList.length) {
@@ -111,7 +118,7 @@ const Singer = () => {
     return (
       <List>
         {singerList.map((item, index) => (
-          <ListItem key={item.accountId + "" + index}>
+          <ListItem key={item.accountId + "" + index} onClick={()=>enterDetail(item)}>
             <div className="img_wrapper">
               <LazyLoad
                 placeholder={
@@ -169,6 +176,7 @@ const Singer = () => {
           <CircleLoading />
         </LoadingContainer>
       )}
+      <Outlet/>
     </>
   );
 };

@@ -187,87 +187,46 @@ export const mapCategory = new Map([
   ["4003", { type: 3, area: 0 }],
 ]);
 
- export const currentAlbum = {
-   creator: {
-     avatarUrl:
-       "http://p1.music.126.net/O9zV6jeawR43pfiK2JaVSw==/109951164232128905.jpg",
-     nickname: "浪里推舟",
-   },
-   coverImgUrl:
-     "http://p2.music.126.net/ecpXnH13-0QWpWQmqlR0gw==/109951164354856816.jpg",
-   subscribedCount: 2010711,
-   name: "听完就睡，耳机是天黑以后柔软的梦境",
-   tracks: [
-     {
-       name: "我真的受伤了",
-       ar: [{ name: "张学友" }, { name: "周华健" }],
-       al: {
-         name: "学友 热",
-       },
-     },
-     {
-       name: "我真的受伤了",
-       ar: [{ name: "张学友" }, { name: "周华健" }],
-       al: {
-         name: "学友 热",
-       },
-     },
-     {
-       name: "我真的受伤了",
-       ar: [{ name: "张学友" }, { name: "周华健" }],
-       al: {
-         name: "学友 热",
-       },
-     },
-     {
-       name: "我真的受伤了",
-       ar: [{ name: "张学友" }, { name: "周华健" }],
-       al: {
-         name: "学友 热",
-       },
-     },
-     {
-       name: "我真的受伤了",
-       ar: [{ name: "张学友" }, { name: "周华健" }],
-       al: {
-         name: "学友 热",
-       },
-     },
-     {
-       name: "我真的受伤了",
-       ar: [{ name: "张学友" }, { name: "周华健" }],
-       al: {
-         name: "学友 热",
-       },
-     },
-     {
-       name: "我真的受伤了",
-       ar: [{ name: "张学友" }, { name: "周华健" }],
-       al: {
-         name: "学友 热",
-       },
-     },
-     {
-       name: "我真的受伤了",
-       ar: [{ name: "张学友" }, { name: "周华健" }],
-       al: {
-         name: "学友 热",
-       },
-     },
-     {
-       name: "我真的受伤了",
-       ar: [{ name: "张学友" }, { name: "周华健" }],
-       al: {
-         name: "学友 热",
-       },
-     },
-     {
-       name: "我真的受伤了",
-       ar: [{ name: "张学友" }, { name: "周华健" }],
-       al: {
-         name: "学友 热",
-       },
-     },
-   ],
- };
-
+//mock
+export const artist = {
+  picUrl:
+    "https://p2.music.126.net/W__FCWFiyq0JdPtuLJoZVQ==/109951163765026271.jpg",
+  name: "薛之谦",
+  hotSongs: [
+    {
+      name: "我好像在哪见过你",
+      ar: [{ name: "薛之谦" }],
+      al: {
+        name: "薛之谦专辑",
+      },
+    },
+    {
+      name: "我好像在哪见过你",
+      ar: [{ name: "薛之谦" }],
+      al: {
+        name: "薛之谦专辑",
+      },
+    },
+    {
+      name: "我好像在哪见过你",
+      ar: [{ name: "薛之谦" }],
+      al: {
+        name: "薛之谦专辑",
+      },
+    },
+    {
+      name: "我好像在哪见过你",
+      ar: [{ name: "薛之谦" }],
+      al: {
+        name: "薛之谦专辑",
+      },
+    },
+    {
+      name: "我好像在哪见过你",
+      ar: [{ name: "薛之谦" }],
+      al: {
+        name: "薛之谦专辑",
+      },
+    },
+  ],
+};
