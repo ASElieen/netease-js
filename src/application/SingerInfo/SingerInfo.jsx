@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect,useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import {useDispatch,useSelector} from 'react-redux'
+import { getSingerInfo } from "../../store/Slices/singerInfoSlice";
+import { useNavigate,useLocation } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 import {
   Container,
@@ -8,15 +10,21 @@ import {
   SongListWrapper,
   BgLayer,
 } from "./SingerInfoStyle";
+import { getUrlId } from "../../api/utils";
 import SongList from "../SongList/SongList";
 import Header from "../../components/Header/Header";
 import Scroll from "../../components/Scroll/Scroll";
 import { BiCollection } from "react-icons/bi";
-import { artist } from "../../api/mock";
+import CircleLoading from "../../components/Loading/CircleLoading";
 
 const SingerInfo = (props) => {
   const [showStatus, setShowStatus] = useState(true);
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const location = useLocation()
+  const urlId = getUrlId(location.pathname)
+
+  const {artist,isLoading} = useSelector(store=>store.singerInfo)
 
   //Ref
   const collectButton = useRef();
@@ -33,18 +41,26 @@ const SingerInfo = (props) => {
   const HEADER_HEIGHT = 45
 
   useEffect(()=>{
-    let h = imageWrapper.current.offsetHeight
-    songScrollWrapper.current.style.top = `${h-OFFSET}px`
-    initialHeight.current = h
+    if(imageWrapper.current){
+      let h = imageWrapper.current.offsetHeight;
+      songScrollWrapper.current.style.top = `${h - OFFSET}px`;
+      initialHeight.current = h;
 
-    //遮罩裹住歌曲列表
-    layer.current.style.top = `${h-OFFSET}px`
-    songScroll.current.refresh()
+      //遮罩裹住歌曲列表
+      layer.current.style.top = `${h - OFFSET}px`;
+      songScroll.current.refresh();
+    }
+  })
+
+  //数据
+  useEffect(()=>{
+    dispatch(getSingerInfo(urlId))
   },[])
 
   const setShowStatusFalse = useCallback(()=>{
     setShowStatus(false)
   },[])
+
 
   //滚动效果的处理
   const handleScroll = (pos) => {
@@ -88,6 +104,8 @@ const SingerInfo = (props) => {
     }
   };
 
+  if(isLoading) return (<CircleLoading/>)
+
   return (
     <CSSTransition
       in={showStatus}
@@ -98,8 +116,8 @@ const SingerInfo = (props) => {
       onExit={() => navigate(-1)}
     >
       <Container>
-        <Header title="头部" ref={header} />
-        <ImgWrapper ref={imageWrapper} bgUrl={artist.picUrl}>
+        <Header title="头部" ref={header} handleClick={setShowStatusFalse} />
+        <ImgWrapper ref={imageWrapper} bgUrl={artist.artist.picUrl}>
           <div className="filter"></div>
         </ImgWrapper>
 

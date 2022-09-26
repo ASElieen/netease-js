@@ -12,29 +12,31 @@ export const Container = styled.div`
   overflow: hidden;
   background: #f2f3f4;
   transform-origin: right bottom;
-  &.fly-enter,&.fly-appear{
-    transform: translate3d(100%,0,0);
+  &.fly-enter,
+  &.fly-appear {
+    transform: translate3d(100%, 0, 0);
   }
-  &.fly-enter-active,&.fly-appear-active{
-    transition: transform .3s;
-    transform: translate3d(0,0,0);
+  &.fly-enter-active,
+  &.fly-appear-active {
+    transition: transform 0.3s;
+    transform: translate3d(0, 0, 0);
   }
-  &.fly-exit{
-    transform: translate3d(0,0,0);
+  &.fly-exit {
+    transform: translate3d(0, 0, 0);
   }
-  &.fly-exit-active{
-    transition: transform .3s;
-    transform: translate3d(100%,0,0);
+  &.fly-exit-active {
+    transition: transform 0.3s;
+    transform: translate3d(100%, 0, 0);
   }
 `;
 
 export const ImgWrapper = styled.div`
- position: relative;
+  position: relative;
   width: 100%;
   height: 0;
   padding-top: 75%;
   transform-origin: top;
-  background: url (${(props) => props.bgUrl});
+  background: url(${(props) => props.bgUrl});
   background-size: cover;
   z-index: 50;
   .filter {

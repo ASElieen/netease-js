@@ -1,6 +1,7 @@
 import React, { forwardRef } from "react";
 import {SongLists,SongItem} from './SongListStyle'
 import { getName } from '../../api/utils'
+import {BsFillPlayFill} from 'react-icons/bs'
 
 const SongList = forwardRef((props,refs) => {
     const {collectCount,showCollect,songs} = props
@@ -39,7 +40,7 @@ const SongList = forwardRef((props,refs) => {
     <SongLists ref={refs} showBackground={props.showBackground}>
       <div className="first_line">
         <div className="play_all">
-          <i className="iconfont">&#xe6e3;</i>
+          <BsFillPlayFill className='iconfont'/>
           <span > 播放全部 <span className="sum">(共 {totalCount} 首)</span></span>
         </div>
         { showCollect ? collect (collectCount) : null}
