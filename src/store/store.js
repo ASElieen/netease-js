@@ -5,6 +5,7 @@ import hotSingerReducer from './Slices/singerListSlice'
 import rankListReducer from './Slices/rankSlice'
 import albumListReducer from './Slices/albumSlice'
 import singerInfoReducer from './Slices/singerInfoSlice'
+import playerReducer from './Slices/playerSlice'
 
 export const store = configureStore({
     reducer:{
@@ -13,6 +14,7 @@ export const store = configureStore({
         hotSinger:hotSingerReducer,
         rankList:rankListReducer,
         albumList:albumListReducer,
-        singerInfo:singerInfoReducer
+        singerInfo:singerInfoReducer,
+        player:playerReducer
     }
 })
