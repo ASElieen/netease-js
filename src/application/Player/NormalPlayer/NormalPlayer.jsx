@@ -29,13 +29,14 @@ const NormalPlayer = (props) => {
 
   // 计算偏移的辅助函数
   const _getPosAndScale = () => {
-    const targetWidth = 40;
-    const paddingLeft = 40;
-    const paddingBottom = 30;
-    const paddingTop = 80;
-    const width = window.innerWidth * 0.8;
+    const targetWidth = 40;//小图标宽度
+    const paddingLeft = 40; // 底部div.icon(小唱片)的1/2宽度
+    const paddingBottom = 30;//底部miniplayer的1/2高度
+    const paddingTop = 80;//顶部title高度
+    const width = window.innerWidth * 0.8;//全屏播放中心CD宽度
     const scale = targetWidth / width;
     // 两个圆心的横坐标距离和纵坐标距离
+    //x从中心到左下角为负
     const x = -(window.innerWidth / 2 - paddingLeft);
     const y = window.innerHeight - paddingTop - width / 2 - paddingBottom;
     return {
