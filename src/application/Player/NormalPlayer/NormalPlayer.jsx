@@ -18,6 +18,7 @@ import {
   ProgressWrapper,
   Operators,
 } from "./NormalPlayerStyle";
+import ProgressBar from "../../../baseUI/ProgressBar/ProgressBar";
 import { useDispatch } from "react-redux";
 
 const NormalPlayer = (props) => {
@@ -145,6 +146,15 @@ const NormalPlayer = (props) => {
         </Middle>
 
         <Bottom className="bottom">
+            {/* 进度条模拟 */}
+          <ProgressWrapper>
+            <span className="time time-l">0:00</span>
+            <div className="progress-bar-wrapper">
+              <ProgressBar percent={0.2}></ProgressBar>
+            </div>
+            <div className="time time-r">4:17</div>
+          </ProgressWrapper>
+          
           <Operators>
             <div className="icon i-left">
               <BiRefresh className="iconfont" />
