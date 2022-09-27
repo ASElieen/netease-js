@@ -1,6 +1,6 @@
-import React,{useRef} from 'react'
-import {CSSTransition} from 'react-transition-group'
-import { getName } from '../../../api/utils';
+import React, { useRef } from "react";
+import { CSSTransition } from "react-transition-group";
+import { getName, prefixStyle } from "../../../api/utils";
 import animations from "create-keyframe-animation";
 import { MdReplay } from "react-icons/md";
 import { BiRefresh } from "react-icons/bi";
@@ -18,13 +18,14 @@ import {
   ProgressWrapper,
   Operators,
 } from "./NormalPlayerStyle";
-import {useDispatch} from 'react-redux'
+import { useDispatch } from "react-redux";
 
 const NormalPlayer = (props) => {
   const { song, fullScreen, changeFullScreen } = props;
   const normalPlayerRef = useRef();
   const cdWrapperRef = useRef();
   const dispatch = useDispatch();
+  const transform = prefixStyle("transform");
 
   // 计算偏移的辅助函数
   const _getPosAndScale = () => {
@@ -77,6 +78,25 @@ const NormalPlayer = (props) => {
     cdWrapperDom.style.animation = "";
   };
 
+   const leave = () => {
+     if (!cdWrapperRef.current) return;
+     const cdWrapperDom = cdWrapperRef.current;
+     cdWrapperDom.style.transition = "all .4s";
+     const { x, y, scale } = _getPosAndScale();
+     cdWrapperDom.style[
+       transform
+     ] = `translate3d(${x}px,${y}px,0) scale(${scale})`;
+   };
+
+   const afterLeave = () => {
+     if (!cdWrapperRef.current) return;
+     const cdWrapperDom = cdWrapperRef.current;
+     cdWrapperDom.style.transition = "";
+     cdWrapperDom.style[transform] = "";
+
+     normalPlayerRef.current.style.display = "none";
+   };
+
   return (
     <CSSTransition
       classNames="normal"
@@ -85,8 +105,8 @@ const NormalPlayer = (props) => {
       mountOnEnter
       onEnter={enter}
       onEntered={afterEnter}
-      //   onExit={leave}
-      //   onExited={afterLeave}
+      onExit={leave}
+      onExited={afterLeave}
     >
       <NormalPlayerContainer ref={normalPlayerRef}>
         <div className="background">
@@ -145,6 +165,6 @@ const NormalPlayer = (props) => {
       </NormalPlayerContainer>
     </CSSTransition>
   );
-}
+};
 
 export default React.memo(NormalPlayer);
