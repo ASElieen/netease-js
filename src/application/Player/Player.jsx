@@ -14,65 +14,67 @@ import NormalPlayer from "./NormalPlayer/NormalPlayer";
 import { useDispatch, useSelector } from "react-redux";
 const Player = () => {
   const dispatch = useDispatch();
-  const audioRef = useRef()
-  
+  const audioRef = useRef();
+
   //先用mock的playList
-  const {
-    fullScreen,
-    playing,
-    currentIndex,
-    mode,
-    sequencePlayList,
-  } = useSelector((store) => store.player);
+  const { fullScreen, playing, currentIndex, mode, sequencePlayList } =
+    useSelector((store) => store.player);
 
   //目前播放时间
-  const [currentTime,setCurrentTime] = useState(0)
+  const [currentTime, setCurrentTime] = useState(0);
   //歌曲总时长
-  const [duration,setDuration] = useState(0)
+  const [duration, setDuration] = useState(0);
+  //记录当前歌曲 下次渲染时确认是否为一首歌
+  const [preSong, setPreSong] = useState({});
   //歌曲播放进度
-  let percent = isNaN(currentTime/duration) ?0:currentTime/duration
+  let percent = isNaN(currentTime / duration) ? 0 : currentTime / duration;
 
   //点击切换播放状态
-  const clickPlaying = (e,state)=>{
+  const clickPlaying = (e, state) => {
     //阻止事件传播
-       e.stopPropagation();
-       dispatch(togglePlayingState(state));
-  }
+    e.stopPropagation();
+    dispatch(togglePlayingState(state));
+  };
 
-  useEffect(()=>{
-    if(!currentSong) return
-    dispatch(changeCurrentIndex(0))
-    let current = playList[0]
-    dispatch(changeCurrentSong(current))
-    audioRef.current.src = getSongUrl(current.id)
-    setTimeout(()=>{
-      audioRef.current.play()
-    })
-    dispatch(togglePlayingState(true))
-    setCurrentTime(0)
-    setDuration(current.dt/1000 | 0) //时长
-  },[])
+  //mock index
+  useEffect(() => {
+    dispatch(changeCurrentIndex(0));
+  }, []);
 
+  useEffect(() => {
+    if (!playList.length || currentIndex === -1 || !playList[currentIndex] || playList[currentIndex].id === preSong.id) return;
+    // if (!currentSong) return;
+    let current = playList[currentIndex];
+    dispatch(changeCurrentSong(current));
+    setPreSong(current)
+    audioRef.current.src = getSongUrl(current.id);
+    setTimeout(() => {
+      audioRef.current.play();
+    });
+    dispatch(togglePlayingState(true));
+    setCurrentTime(0); //从头播放
+    setDuration((current.dt / 1000) | 0); //时长
+  }, [playList,currentIndex]);
 
   //监听playing变量实现播放暂停切换
-  useEffect(()=>{
-    playing? audioRef.current.play():audioRef.current.pause()
-  },[playing])
+  useEffect(() => {
+    playing ? audioRef.current.play() : audioRef.current.pause();
+  }, [playing]);
 
-  const updateCurrentTime = (e)=>{
+  const updateCurrentTime = (e) => {
     //e.target是整个audio标签
-    setCurrentTime(e.target.currentTime)
-  }
+    setCurrentTime(e.target.currentTime);
+  };
 
   //改变percent
-  const onProgressChange = (currentPercent)=>{
-    const newTime = currentPercent * duration
-    setCurrentTime(newTime)
-    audioRef.current.currentTime = newTime
-    if(!playing){
-      dispatch(togglePlayingState(true))
+  const onProgressChange = (currentPercent) => {
+    const newTime = currentPercent * duration;
+    setCurrentTime(newTime);
+    audioRef.current.currentTime = newTime;
+    if (!playing) {
+      dispatch(togglePlayingState(true));
     }
-  }
+  };
 
   //显示的mock数据(CD)
   const currentSong = {
@@ -85,38 +87,35 @@ const Player = () => {
   };
 
   //----------------------------切换部分逻辑-------------------
-  const handleLoop = ()=>{
-    audioRef.current.currentTime = 0
-    dispatch(togglePlayingState(true))
-    audioRef.current.play()
-  }
+  const handleLoop = () => {
+    audioRef.current.currentTime = 0;
+    dispatch(togglePlayingState(true));
+    audioRef.current.play();
+  };
 
-  const handlePrev = ()=>{
-    //只有一首歌单曲循环
-    if(playList.length===1){
-      handleLoop()
-      return
-    }
-    let index = currentIndex -1
-    if(index<0) index = playList.length-1
-    if(!playing) dispatch(togglePlayingState(true))
-    dispatch(changeCurrentIndex(index))
-  }
-
-  const handleNext = ()=>{
+  const handlePrev = () => {
     //只有一首歌单曲循环
     if (playList.length === 1) {
       handleLoop();
       return;
     }
-    let index = currentIndex+1
-    if(index===playList.length) index = 0
-    if(!playing) dispatch(togglePlayingState(true))
-    dispatch(changeCurrentIndex(index))
-  }
+    let index = currentIndex - 1;
+    if (index < 0) index = playList.length - 1;
+    if (!playing) dispatch(togglePlayingState(true));
+    dispatch(changeCurrentIndex(index));
+  };
 
-
-
+  const handleNext = () => {
+    //只有一首歌单曲循环
+    if (playList.length === 1) {
+      handleLoop();
+      return;
+    }
+    let index = currentIndex + 1;
+    if (index === playList.length) index = 0;
+    if (!playing) dispatch(togglePlayingState(true));
+    dispatch(changeCurrentIndex(index));
+  };
 
   return (
     <>
