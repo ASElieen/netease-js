@@ -8,7 +8,8 @@ import { CircleProgress } from '../../../baseUI/CircleProgress/CircleProgress';
 import {useDispatch} from 'react-redux'
 
 const MiniPlayer = (props) => {
-    const { song,fullScreen,changeFullScreen } = props;
+    const { song, fullScreen, playing } = props;
+    const { changeFullScreen, clickPlaying } = props;
     const miniPlayerRef = useRef()
     const dispatch = useDispatch()
     const percent = 0.2
@@ -33,7 +34,7 @@ const MiniPlayer = (props) => {
         <div className="icon">
           <div className="imgWrapper">
             <img
-              className="play"
+              className={`play ${playing ? "" : "pause"}`}
               src={song.al.picUrl}
               width="40"
               height="40"
@@ -49,7 +50,17 @@ const MiniPlayer = (props) => {
 
         <div className="control">
           <CircleProgress radius={32} percent={percent}>
-            <AiOutlinePause className="iconfont icon-mini" />
+            {playing ? (
+              <AiOutlinePause
+                className="iconfont icon-mini"
+                onClick={(e) => clickPlaying(e, false)}
+              />
+            ) : (
+              <BsFillPlayFill
+                className="iconfont icon-mini"
+                onClick={(e) => clickPlaying(e, true)}
+              />
+            )}
           </CircleProgress>
         </div>
 

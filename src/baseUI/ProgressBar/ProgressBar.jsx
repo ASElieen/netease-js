@@ -6,9 +6,21 @@ const ProgressBar = (props) => {
   const progress = useRef();
   const progressBtn = useRef();
   const [touch, setTouch] = useState({});
-  const {percentChange} = props
+  const {percentChange,percent} = props
 
   const progressBtnWidth = 16;
+
+  //监听percent
+  useEffect(() => {
+    if (percent >= 0 && percent <= 1 && !touch.initiated) {
+      const barWidth = progressBar.current.clientWidth - progressBtnWidth;
+      const offsetWidth = percent * barWidth;
+      progress.current.style.width = `${offsetWidth}px`;
+      progressBtn.current.style[
+        "transform"
+      ] = `translate3d(${offsetWidth}px, 0, 0)`;
+    }
+  }, [percent]);
 
   //处理父组件传来的数据
   const changePercent = ()=>{

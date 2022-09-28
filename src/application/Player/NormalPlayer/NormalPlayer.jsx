@@ -1,6 +1,6 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { CSSTransition } from "react-transition-group";
-import { getName, prefixStyle } from "../../../api/utils";
+import { getName, prefixStyle, formatPlayTime } from "../../../api/utils";
 import animations from "create-keyframe-animation";
 import { MdReplay } from "react-icons/md";
 import { BiRefresh } from "react-icons/bi";
@@ -22,7 +22,9 @@ import ProgressBar from "../../../baseUI/ProgressBar/ProgressBar";
 import { useDispatch } from "react-redux";
 
 const NormalPlayer = (props) => {
-  const { song, fullScreen, changeFullScreen } = props;
+  const { song, fullScreen, playing, percent, duration, currentTime } = props;
+  //onProgressChange 进度条滑动或点击时改变percent
+  const { clickPlaying, changeFullScreen, onProgressChange } = props;
   const normalPlayerRef = useRef();
   const cdWrapperRef = useRef();
   const dispatch = useDispatch();
@@ -30,11 +32,11 @@ const NormalPlayer = (props) => {
 
   // 计算偏移的辅助函数
   const _getPosAndScale = () => {
-    const targetWidth = 40;//小图标宽度
+    const targetWidth = 40; //小图标宽度
     const paddingLeft = 40; // 底部div.icon(小唱片)的1/2宽度
-    const paddingBottom = 30;//底部miniplayer的1/2高度
-    const paddingTop = 80;//顶部title高度
-    const width = window.innerWidth * 0.8;//全屏播放中心CD宽度
+    const paddingBottom = 30; //底部miniplayer的1/2高度
+    const paddingTop = 80; //顶部title高度
+    const width = window.innerWidth * 0.8; //全屏播放中心CD宽度
     const scale = targetWidth / width;
     // 两个圆心的横坐标距离和纵坐标距离
     //x从中心到左下角为负
@@ -80,24 +82,24 @@ const NormalPlayer = (props) => {
     cdWrapperDom.style.animation = "";
   };
 
-   const leave = () => {
-     if (!cdWrapperRef.current) return;
-     const cdWrapperDom = cdWrapperRef.current;
-     cdWrapperDom.style.transition = "all .4s";
-     const { x, y, scale } = _getPosAndScale();
-     cdWrapperDom.style[
-       transform
-     ] = `translate3d(${x}px,${y}px,0) scale(${scale})`;
-   };
+  const leave = () => {
+    if (!cdWrapperRef.current) return;
+    const cdWrapperDom = cdWrapperRef.current;
+    cdWrapperDom.style.transition = "all .4s";
+    const { x, y, scale } = _getPosAndScale();
+    cdWrapperDom.style[
+      transform
+    ] = `translate3d(${x}px,${y}px,0) scale(${scale})`;
+  };
 
-   const afterLeave = () => {
-     if (!cdWrapperRef.current) return;
-     const cdWrapperDom = cdWrapperRef.current;
-     cdWrapperDom.style.transition = "";
-     cdWrapperDom.style[transform] = "";
+  const afterLeave = () => {
+    if (!cdWrapperRef.current) return;
+    const cdWrapperDom = cdWrapperRef.current;
+    cdWrapperDom.style.transition = "";
+    cdWrapperDom.style[transform] = "";
 
-     normalPlayerRef.current.style.display = "none";
-   };
+    normalPlayerRef.current.style.display = "none";
+  };
 
   return (
     <CSSTransition
@@ -137,7 +139,7 @@ const NormalPlayer = (props) => {
           <CDWrapper>
             <div className="cd">
               <img
-                className="image play"
+                className={`image play ${playing ? "" : "pause"}`}
                 src={song.al.picUrl + "?param=400x400"}
                 alt=""
               />
@@ -146,15 +148,18 @@ const NormalPlayer = (props) => {
         </Middle>
 
         <Bottom className="bottom">
-            {/* 进度条模拟 */}
+          {/* 进度条模拟 */}
           <ProgressWrapper>
-            <span className="time time-l">0:00</span>
+            <span className="time time-l">{formatPlayTime(currentTime)}</span>
             <div className="progress-bar-wrapper">
-              <ProgressBar percent={0.2}></ProgressBar>
+              <ProgressBar
+                percent={percent}
+                percentChange={onProgressChange}
+              ></ProgressBar>
             </div>
-            <div className="time time-r">4:17</div>
+            <div className="time time-r">{formatPlayTime(duration)}</div>
           </ProgressWrapper>
-          
+
           <Operators>
             <div className="icon i-left">
               <BiRefresh className="iconfont" />
@@ -163,7 +168,17 @@ const NormalPlayer = (props) => {
               <IoPlaySkipBack className="iconfont" />
             </div>
             <div className="icon i-center">
-              <AiOutlinePauseCircle className="iconfont" />
+              {playing ? (
+                <AiOutlinePauseCircle
+                  className="iconfont"
+                  onClick={(e) => clickPlaying(e, !playing)}
+                />
+              ) : (
+                <BsFillPlayFill
+                  className="iconfont"
+                  onClick={(e) => clickPlaying(e, !playing)}
+                />
+              )}
             </div>
             <div className="icon i-right">
               <IoPlaySkipForward className="iconfont" />
