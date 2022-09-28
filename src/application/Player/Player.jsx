@@ -1,5 +1,10 @@
 import React,{useState,useRef,useEffect} from "react";
-import { getSongUrl,isEmptyObject } from "../../api/utils";
+import {
+  getSongUrl,
+  isEmptyObject,
+  getRandomInt,
+  shuffle,
+findIndex} from "../../api/utils";
 import { playList } from "../../api/mock";
 import {
   changeFullScreen,
@@ -9,6 +14,7 @@ import {
   changePlayList,
   changeMode,
 } from "../../store/Slices/playerSlice";
+import { playMode } from "../../api/config";
 import MiniPlayer from "./MiniPlayer/MiniPlayer";
 import NormalPlayer from "./NormalPlayer/NormalPlayer";
 import { useDispatch, useSelector } from "react-redux";
@@ -117,6 +123,36 @@ const Player = () => {
     dispatch(changeCurrentIndex(index));
   };
 
+  //-------------------播放模式切换-----------------------
+  const changePlayMode = ()=>{
+    let newMode = (mode+1)%3
+    if(newMode===0){
+      //顺序模式
+      dispatch(changePlayList(sequencePlayList))
+      let index = findIndex(currentSong,sequencePlayList)
+      dispatch(changeCurrentIndex(index))
+    }else if(newMode === 1){
+      //单曲循环
+      dispatch(changePlayList(sequencePlayList))
+    }else if(newMode === 2){
+      //随机播放
+      let newList = shuffle(sequencePlayList)
+      let index = findIndex(currentSong,newList)
+      dispatch(changePlayList(newList))
+      dispatch(changeCurrentIndex(index))
+    }
+    dispatch(changeMode(newMode))
+  }
+
+  //歌曲播放完之后的处理
+  const handleEnd = ()=>{
+    if (mode === playMode.loop) {
+      handleLoop();
+    } else {
+      handleNext();
+    }
+  }
+
   return (
     <>
       {isEmptyObject(currentSong) ? null : (
@@ -144,9 +180,11 @@ const Player = () => {
           onProgressChange={onProgressChange} //进度条改变逻辑
           handlePrev={handlePrev}
           handleNext={handleNext}
+          changePlayMode={changePlayMode} //播放模式切换
+          mode={mode}
         ></NormalPlayer>
       )}
-      <audio ref={audioRef} onTimeUpdate={updateCurrentTime}></audio>
+      <audio ref={audioRef} onTimeUpdate={updateCurrentTime} onEnded={handleEnd}></audio>
     </>
   );
 };

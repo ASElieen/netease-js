@@ -19,12 +19,20 @@ import {
   Operators,
 } from "./NormalPlayerStyle";
 import ProgressBar from "../../../baseUI/ProgressBar/ProgressBar";
+import { playMode } from "../../../api/config";
 import { useDispatch } from "react-redux";
 
 const NormalPlayer = (props) => {
-  const { song, fullScreen, playing, percent, duration, currentTime } = props;
+  const { song, fullScreen, playing, percent, duration, currentTime,mode } = props;
   //onProgressChange 进度条滑动或点击时改变percent
-  const { clickPlaying, changeFullScreen, onProgressChange,handlePrev,handleNext } = props;
+  const {
+    clickPlaying,
+    changeFullScreen,
+    onProgressChange,
+    handlePrev,
+    handleNext,
+    changePlayMode,
+  } = props;
   const normalPlayerRef = useRef();
   const cdWrapperRef = useRef();
   const dispatch = useDispatch();
@@ -101,6 +109,19 @@ const NormalPlayer = (props) => {
     normalPlayerRef.current.style.display = "none";
   };
 
+  //判断playmode
+  const getPlayMode = () => {
+    let content;
+    if (mode === playMode.sequence) {
+      content = <BiRefresh className="iconfont" onClick={changePlayMode} />;
+    } else if (mode === playMode.loop) {
+      content = <MdReplay className="iconfont" onClick={changePlayMode} />;
+    } else {
+      content = <FaRandom className="iconfont" onClick={changePlayMode} />;
+    }
+    return content;
+  };
+
   return (
     <CSSTransition
       classNames="normal"
@@ -162,7 +183,7 @@ const NormalPlayer = (props) => {
 
           <Operators>
             <div className="icon i-left">
-              <BiRefresh className="iconfont" />
+              {getPlayMode()}
             </div>
             <div className="icon i-left" onClick={handlePrev}>
               <IoPlaySkipBack className="iconfont" />
