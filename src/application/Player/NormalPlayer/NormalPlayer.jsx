@@ -24,7 +24,7 @@ import { useDispatch } from "react-redux";
 const NormalPlayer = (props) => {
   const { song, fullScreen, playing, percent, duration, currentTime } = props;
   //onProgressChange 进度条滑动或点击时改变percent
-  const { clickPlaying, changeFullScreen, onProgressChange } = props;
+  const { clickPlaying, changeFullScreen, onProgressChange,handlePrev,handleNext } = props;
   const normalPlayerRef = useRef();
   const cdWrapperRef = useRef();
   const dispatch = useDispatch();
@@ -164,7 +164,7 @@ const NormalPlayer = (props) => {
             <div className="icon i-left">
               <BiRefresh className="iconfont" />
             </div>
-            <div className="icon i-left">
+            <div className="icon i-left" onClick={handlePrev}>
               <IoPlaySkipBack className="iconfont" />
             </div>
             <div className="icon i-center">
@@ -181,7 +181,7 @@ const NormalPlayer = (props) => {
               )}
             </div>
             <div className="icon i-right">
-              <IoPlaySkipForward className="iconfont" />
+              <IoPlaySkipForward className="iconfont" onClick={handleNext} />
             </div>
             <div className="icon i-right">
               <BsMusicNoteList className="iconfont" />

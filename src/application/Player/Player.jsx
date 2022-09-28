@@ -83,6 +83,41 @@ const Player = () => {
     name: "木偶人",
     ar: [{ name: "薛之谦" }],
   };
+
+  //----------------------------切换部分逻辑-------------------
+  const handleLoop = ()=>{
+    audioRef.current.currentTime = 0
+    dispatch(togglePlayingState(true))
+    audioRef.current.play()
+  }
+
+  const handlePrev = ()=>{
+    //只有一首歌单曲循环
+    if(playList.length===1){
+      handleLoop()
+      return
+    }
+    let index = currentIndex -1
+    if(index<0) index = playList.length-1
+    if(!playing) dispatch(togglePlayingState(true))
+    dispatch(changeCurrentIndex(index))
+  }
+
+  const handleNext = ()=>{
+    //只有一首歌单曲循环
+    if (playList.length === 1) {
+      handleLoop();
+      return;
+    }
+    let index = currentIndex+1
+    if(index===playList.length) index = 0
+    if(!playing) dispatch(togglePlayingState(true))
+    dispatch(changeCurrentIndex(index))
+  }
+
+
+
+
   return (
     <>
       {isEmptyObject(currentSong) ? null : (
@@ -108,6 +143,8 @@ const Player = () => {
           clickPlaying={clickPlaying}
           currentTime={currentTime} //当前播放时间
           onProgressChange={onProgressChange} //进度条改变逻辑
+          handlePrev={handlePrev}
+          handleNext={handleNext}
         ></NormalPlayer>
       )}
       <audio ref={audioRef} onTimeUpdate={updateCurrentTime}></audio>
