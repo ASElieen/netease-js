@@ -41,7 +41,7 @@ const playerSlice = createSlice({
     },
     changeShowPlayList:(state,action)=>{
       state.showPlayList = action.payload
-    }
+    },
   },
 });
 

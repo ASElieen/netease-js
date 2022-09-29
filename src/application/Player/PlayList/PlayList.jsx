@@ -74,6 +74,12 @@ const PlayList = (props) => {
     // 具体逻辑比较复杂 后面来实现
   };
 
+  //-----------------------交互逻辑--------------------------------
+  const handleChangeCurrentIndex = (index)=>{
+    if(currentIndex === index) return
+    dispatch(changeCurrentIndex(index))
+  }
+
   return (
     <CSSTransition
       in={showPlayList}
@@ -89,7 +95,7 @@ const PlayList = (props) => {
         style={isShow === true ? { display: "block" } : { display: "none" }}
         onClick={() => dispatch(changeShowPlayList(false))}
       >
-        <div className="list_wrapper" ref={listWrapperRef}>
+        <div className="list_wrapper" ref={listWrapperRef} onClick={(e)=>e.stopPropagation()}>
           <ListHeader>
             <h1 className="title">{getPlayMode()}</h1>
           </ListHeader>
@@ -97,7 +103,7 @@ const PlayList = (props) => {
             <Scroll>
               <ListContent>
                 {playList.map((item, index) => (
-                  <li className="item" key={item.id}>
+                  <li className="item" key={item.id} onClick={handleChangeCurrentIndex}>
                     {/* getCurrentIcon(item) */}
                     <span className="text">
                       {item.name}-{getName(item.ar)}

@@ -18,13 +18,23 @@ import MiniPlayer from "./MiniPlayer/MiniPlayer";
 import NormalPlayer from "./NormalPlayer/NormalPlayer";
 import PlayList from "./PlayList/PlayList";
 import { useDispatch, useSelector } from "react-redux";
+
+//歌词测试
+import { getLyricRequest } from "../../api/request";
 const Player = () => {
   const dispatch = useDispatch();
   const audioRef = useRef();
 
   //先用mock的playList
-  const { fullScreen, playing, currentIndex, mode, sequencePlayList,currentSong,playList } =
-    useSelector((store) => store.player);
+  const {
+    fullScreen,
+    playing,
+    currentIndex,
+    mode,
+    sequencePlayList,
+    currentSong,
+    playList,
+  } = useSelector((store) => store.player);
 
   //目前播放时间
   const [currentTime, setCurrentTime] = useState(0);
@@ -33,7 +43,7 @@ const Player = () => {
   //记录当前歌曲 下次渲染时确认是否为一首歌
   const [preSong, setPreSong] = useState({});
 
-  const songReady = useRef(true)
+  const songReady = useRef(true);
   //歌曲播放进度
   let percent = isNaN(currentTime / duration) ? 0 : currentTime / duration;
 
@@ -44,10 +54,24 @@ const Player = () => {
     dispatch(togglePlayingState(state));
   };
 
-  //mock index
-  useEffect(() => {
-    dispatch(changeCurrentIndex(0));
-  }, []);
+  //-----------------歌词解析测试-------------------
+  const currentLysic = useRef();
+  const getLysic = (id)=>{
+    let lysic = ''
+    getLyricRequest(id).then(data=>{
+      console.log(data)
+      lysic = data.lrc.lysic
+      if(!lysic){
+        currentLysic.current = null
+        return 
+      }
+    })
+    .catch(()=>{
+      songReady.current = true
+      audioRef.current.play()
+    })
+  }
+  //---------------------------------
 
   useEffect(() => {
     if (
@@ -72,7 +96,12 @@ const Player = () => {
     dispatch(togglePlayingState(true));
     setCurrentTime(0); //从头播放
     setDuration((current.dt / 1000) | 0); //时长
-  }, [playList,currentIndex]);
+    //歌词测试
+    getLysic(current.id)
+    setCurrentTime(0)
+    setDuration((current.dt/1000)|0)
+    
+  }, [playList, currentIndex]);
 
   //监听playing变量实现播放暂停切换
   useEffect(() => {
@@ -93,7 +122,6 @@ const Player = () => {
       dispatch(togglePlayingState(true));
     }
   };
-
 
   //----------------------------歌曲切换部分逻辑-------------------------
   const handleLoop = () => {
@@ -126,40 +154,40 @@ const Player = () => {
     dispatch(changeCurrentIndex(index));
   };
 
-  const handleError = ()=>{
-    songReady.current = true
-    console.log('播放出错')
-  }
+  const handleError = () => {
+    songReady.current = true;
+    console.log("播放出错");
+  };
 
   //-------------------播放模式切换-----------------------
-  const changePlayMode = ()=>{
-    let newMode = (mode+1)%3
-    if(newMode===0){
+  const changePlayMode = () => {
+    let newMode = (mode + 1) % 3;
+    if (newMode === 0) {
       //顺序模式
-      dispatch(changePlayList(sequencePlayList))
-      let index = findIndex(currentSong,sequencePlayList)
-      dispatch(changeCurrentIndex(index))
-    }else if(newMode === 1){
+      dispatch(changePlayList(sequencePlayList));
+      let index = findIndex(currentSong, sequencePlayList);
+      dispatch(changeCurrentIndex(index));
+    } else if (newMode === 1) {
       //单曲循环
-      dispatch(changePlayList(sequencePlayList))
-    }else if(newMode === 2){
+      dispatch(changePlayList(sequencePlayList));
+    } else if (newMode === 2) {
       //随机播放
-      let newList = shuffle(sequencePlayList)
-      let index = findIndex(currentSong,newList)
-      dispatch(changePlayList(newList))
-      dispatch(changeCurrentIndex(index))
+      let newList = shuffle(sequencePlayList);
+      let index = findIndex(currentSong, newList);
+      dispatch(changePlayList(newList));
+      dispatch(changeCurrentIndex(index));
     }
-    dispatch(changeMode(newMode))
-  }
+    dispatch(changeMode(newMode));
+  };
 
   //歌曲播放完之后的处理
-  const handleEnd = ()=>{
+  const handleEnd = () => {
     if (mode === playMode.loop) {
       handleLoop();
     } else {
       handleNext();
     }
-  }
+  };
 
   return (
     <>
@@ -200,7 +228,7 @@ const Player = () => {
         onEnded={handleEnd}
         onError={handleError}
       ></audio>
-      <PlayList changePlayMode={changePlayMode}/>
+      <PlayList changePlayMode={changePlayMode} />
     </>
   );
 };
