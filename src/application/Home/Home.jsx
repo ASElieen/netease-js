@@ -1,13 +1,15 @@
 import React from 'react'
 //图标
 import { AiOutlineMenu, AiOutlineSearch } from "react-icons/ai";
-import { Outlet,NavLink } from 'react-router-dom';
+import { Outlet,NavLink,useNavigate } from 'react-router-dom';
 
 import Player from '../Player/Player';
+import Search from '../../components/Search/Search';
 
 import { Top,Tab,TabItem } from './HomeStyle'
 
 const Home = () => {
+  const navigate = useNavigate()
   return (
     <>
       <Top>
@@ -15,7 +17,7 @@ const Home = () => {
           <AiOutlineMenu />
         </span>
         <span>网抑云音乐</span>
-        <span className="iconfont">
+        <span className="iconfont" onClick={()=>navigate('/search')}>
           <AiOutlineSearch />
         </span>
       </Top>

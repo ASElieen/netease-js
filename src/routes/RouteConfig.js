@@ -8,6 +8,7 @@ const Recommend = lazy(()=>import('../application/Recommend/Recommend.jsx'))
 const Rank = lazy(()=>import('../application/Rank/Rank.jsx'))
 const Album = lazy(()=>import('../application/Album/Album'))
 const SingerInfo = lazy(()=>import('../application/SingerInfo/SingerInfo'))
+const Search = lazy(()=>import('../components/Search/Search'))
 
 export const RouteConfig = ()=>{
     return (
@@ -23,6 +24,7 @@ export const RouteConfig = ()=>{
                 <Route path='/singers' element={<Singers/>}>
                     <Route path='/singers/:id' element={<SingerInfo/>}/>
                 </Route>
+                <Route path='/search' element={<Search/>}></Route>
             </Route>
         </Routes>
     )
