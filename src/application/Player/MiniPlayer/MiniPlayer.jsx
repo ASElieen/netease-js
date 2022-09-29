@@ -8,11 +8,16 @@ import { CircleProgress } from '../../../baseUI/CircleProgress/CircleProgress';
 import {useDispatch} from 'react-redux'
 
 const MiniPlayer = (props) => {
-    const { song, fullScreen, playing } = props;
-    const { changeFullScreen, clickPlaying } = props;
+    const { song, fullScreen, playing,percent } = props;
+    const { changeFullScreen, clickPlaying,changeShowPlayList} = props;
     const miniPlayerRef = useRef()
     const dispatch = useDispatch()
-    const percent = 0.2
+
+    const handleChangeShowPlayList =(e)=>{
+      dispatch(changeShowPlayList(true))
+      e.stopPropagation()
+    }
+
   return (
     <CSSTransition
       in={!fullScreen}
@@ -65,7 +70,7 @@ const MiniPlayer = (props) => {
         </div>
 
         <div className="control">
-          <BsMusicNoteList className="iconfont" />
+          <BsMusicNoteList className="iconfont" onClick={handleChangeShowPlayList} />
         </div>
       </MiniPlayerContainer>
     </CSSTransition>

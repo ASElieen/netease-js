@@ -5,6 +5,9 @@ const rotate = keyframes`
 0%{
     transform: rotate(0);
 }
+50%{
+  transform: rotate(180deg);
+}
 100%{
     transform: rotate(360deg);
 }
@@ -43,7 +46,7 @@ export const MiniPlayerContainer = styled.div`
       img {
         border-radius: 50%;
         &.play {
-          animation: ${rotate} 10s infinite;
+          animation:${rotate} 10s infinite linear;
           &.pause {
             animation-play-state: paused;
           }

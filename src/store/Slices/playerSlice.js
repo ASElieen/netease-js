@@ -39,6 +39,9 @@ const playerSlice = createSlice({
     changeSequencePlaylist: (state, action) => {
       state.sequencePlayList = action.payload;
     },
+    changeShowPlayList:(state,action)=>{
+      state.showPlayList = action.payload
+    }
   },
 });
 
@@ -50,5 +53,6 @@ export const {
   changePlayList,
   changeMode,
   changeSequencePlaylist,
+  changeShowPlayList
 } = playerSlice.actions;
 export default playerSlice.reducer;

@@ -2,10 +2,8 @@ import React,{useState,useRef,useEffect} from "react";
 import {
   getSongUrl,
   isEmptyObject,
-  getRandomInt,
   shuffle,
 findIndex} from "../../api/utils";
-import { playList } from "../../api/mock";
 import {
   changeFullScreen,
   togglePlayingState,
@@ -13,17 +11,19 @@ import {
   changeCurrentSong,
   changePlayList,
   changeMode,
+  changeShowPlayList
 } from "../../store/Slices/playerSlice";
 import { playMode } from "../../api/config";
 import MiniPlayer from "./MiniPlayer/MiniPlayer";
 import NormalPlayer from "./NormalPlayer/NormalPlayer";
+import PlayList from "./PlayList/PlayList";
 import { useDispatch, useSelector } from "react-redux";
 const Player = () => {
   const dispatch = useDispatch();
   const audioRef = useRef();
 
   //先用mock的playList
-  const { fullScreen, playing, currentIndex, mode, sequencePlayList } =
+  const { fullScreen, playing, currentIndex, mode, sequencePlayList,currentSong,playList } =
     useSelector((store) => store.player);
 
   //目前播放时间
@@ -32,6 +32,8 @@ const Player = () => {
   const [duration, setDuration] = useState(0);
   //记录当前歌曲 下次渲染时确认是否为一首歌
   const [preSong, setPreSong] = useState({});
+
+  const songReady = useRef(true)
   //歌曲播放进度
   let percent = isNaN(currentTime / duration) ? 0 : currentTime / duration;
 
@@ -48,14 +50,24 @@ const Player = () => {
   }, []);
 
   useEffect(() => {
-    if (!playList.length || currentIndex === -1 || !playList[currentIndex] || playList[currentIndex].id === preSong.id) return;
-    // if (!currentSong) return;
+    if (
+      !playList.length ||
+      currentIndex === -1 ||
+      !playList[currentIndex] ||
+      playList[currentIndex].id === preSong.id ||
+      !songReady.current
+    )
+      return;
     let current = playList[currentIndex];
     dispatch(changeCurrentSong(current));
-    setPreSong(current)
+    setPreSong(current);
+    songReady.current = false; // 把标志位置为 false, 表示现在新的资源没有缓冲完成，不能切歌
     audioRef.current.src = getSongUrl(current.id);
+
     setTimeout(() => {
-      audioRef.current.play();
+      audioRef.current.play().then(() => {
+        songReady.current = true;
+      });
     });
     dispatch(togglePlayingState(true));
     setCurrentTime(0); //从头播放
@@ -82,17 +94,8 @@ const Player = () => {
     }
   };
 
-  //显示的mock数据(CD)
-  const currentSong = {
-    al: {
-      picUrl:
-        "https://p1.music.126.net/JL_id1CFwNJpzgrXwemh4Q==/109951164172892390.jpg",
-    },
-    name: "木偶人",
-    ar: [{ name: "薛之谦" }],
-  };
 
-  //----------------------------切换部分逻辑-------------------
+  //----------------------------歌曲切换部分逻辑-------------------------
   const handleLoop = () => {
     audioRef.current.currentTime = 0;
     dispatch(togglePlayingState(true));
@@ -122,6 +125,11 @@ const Player = () => {
     if (!playing) dispatch(togglePlayingState(true));
     dispatch(changeCurrentIndex(index));
   };
+
+  const handleError = ()=>{
+    songReady.current = true
+    console.log('播放出错')
+  }
 
   //-------------------播放模式切换-----------------------
   const changePlayMode = ()=>{
@@ -165,6 +173,7 @@ const Player = () => {
           percent={percent} //进度
           changeFullScreen={changeFullScreen}
           clickPlaying={clickPlaying}
+          changeShowPlayList={changeShowPlayList}
         ></MiniPlayer>
       )}
       {isEmptyObject(currentSong) ? null : (
@@ -182,9 +191,16 @@ const Player = () => {
           handleNext={handleNext}
           changePlayMode={changePlayMode} //播放模式切换
           mode={mode}
+          changeShowPlayList={changeShowPlayList}
         ></NormalPlayer>
       )}
-      <audio ref={audioRef} onTimeUpdate={updateCurrentTime} onEnded={handleEnd}></audio>
+      <audio
+        ref={audioRef}
+        onTimeUpdate={updateCurrentTime}
+        onEnded={handleEnd}
+        onError={handleError}
+      ></audio>
+      <PlayList changePlayMode={changePlayMode}/>
     </>
   );
 };

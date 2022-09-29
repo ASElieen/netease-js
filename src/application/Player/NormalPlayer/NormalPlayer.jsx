@@ -32,11 +32,13 @@ const NormalPlayer = (props) => {
     handlePrev,
     handleNext,
     changePlayMode,
+    changeShowPlayList
   } = props;
   const normalPlayerRef = useRef();
   const cdWrapperRef = useRef();
   const dispatch = useDispatch();
   const transform = prefixStyle("transform");
+
 
   // 计算偏移的辅助函数
   const _getPosAndScale = () => {
@@ -205,7 +207,7 @@ const NormalPlayer = (props) => {
               <IoPlaySkipForward className="iconfont" onClick={handleNext} />
             </div>
             <div className="icon i-right">
-              <BsMusicNoteList className="iconfont" />
+              <BsMusicNoteList className="iconfont" onClick={()=>dispatch(changeShowPlayList(true))}/>
             </div>
           </Operators>
         </Bottom>
